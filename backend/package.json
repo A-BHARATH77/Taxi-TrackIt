@@ -1,0 +1,27 @@
+{
+  "name": "taxi-trackit-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "concurrently \"nodemon server.js\" \"node services/taxiSimulator.js\"",
+    "test:simulator": "node test-taxi-simulator.js",
+    "simulator": "node services/taxiSimulator.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.86.0",
+    "@turf/turf": "^7.3.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.11",
+    "redis": "^4.7.1",
+    "ws": "^8.18.3"
+  },
+  "engines": {
+    "node": "^20.19.6"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
