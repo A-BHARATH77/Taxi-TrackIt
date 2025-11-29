@@ -41,7 +41,7 @@ export function ZonePage() {
   const links = [
     {
       label: "Home",
-      href: "/",
+      href: "/home",
       icon: (
         <IconBrandTabler className="h-8 w-8 shrink-0 text-neutral-900 dark:text-neutral-200" />
       ),
