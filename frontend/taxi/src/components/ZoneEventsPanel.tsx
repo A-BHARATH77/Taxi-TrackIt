@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { IconMapPin, IconArrowRight, IconClock, IconActivity } from '@tabler/icons-react';
+import { useZoneEvents } from '../contexts/ZoneEventsContext';
 
 interface ZoneEvent {
   id: string;
@@ -16,7 +17,7 @@ type ViewMode = 'live' | 'history';
 
 export function ZoneEventsPanel() {
   const [viewMode, setViewMode] = useState<ViewMode>('live');
-  const [liveEvents, setLiveEvents] = useState<ZoneEvent[]>([]);
+  const { liveEvents } = useZoneEvents(); // Get live events from context
   const [historyEvents, setHistoryEvents] = useState<ZoneEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [zoneMap, setZoneMap] = useState<Map<string, string>>(new Map());
@@ -108,57 +109,7 @@ export function ZoneEventsPanel() {
     }
   }, [viewMode]);
 
-  useEffect(() => {
-    if (viewMode !== 'live') return;
-
-    // Connect to WebSocket to listen for zone crossing events
-    const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:5000/ws';
-    const ws = new WebSocket(WS_URL);
-
-    ws.onopen = () => {
-      console.log('✅ Zone Events Panel: WebSocket connected');
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        if (message.type === 'zone_crossing') {
-          const eventData = message.data;
-          const taxiId = eventData.taxi_id?.toString() || 'Unknown';
-          const taxiName = eventData.taxi_name || 'Taxi';
-          
-          const newEvent: ZoneEvent = {
-            id: `${eventData.taxi_id}-${Date.now()}`,
-            taxi_id: taxiId,
-            taxi_name: `${taxiName} - ${taxiId}`,
-            event_type: eventData.event_type,
-            previous_zone: getZoneName(eventData.previous_zone),
-            current_zone: getZoneName(eventData.current_zone),
-            timestamp: eventData.timestamp || Date.now(),
-          };
-
-          console.log('🚪 Live zone event:', newEvent);
-          setLiveEvents((prev) => [newEvent, ...prev].slice(0, 50)); // Keep last 50 events
-        }
-      } catch (error) {
-        console.error('Error parsing zone event:', error);
-      }
-    };
-
-    ws.onerror = (error) => {
-      console.error('❌ Zone Events Panel: WebSocket error:', error);
-    };
-
-    ws.onclose = () => {
-      console.log('❌ Zone Events Panel: WebSocket disconnected');
-    };
-
-    return () => {
-      if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
-        ws.close();
-      }
-    };
-  }, [viewMode, zoneMap]); // Add zoneMap as dependency
+  // No need for separate WebSocket - events come through the shared context from useWebSocket hook
 
   const getEventColor = (eventType: string) => {
     switch (eventType) {
@@ -204,7 +155,14 @@ export function ZoneEventsPanel() {
     });
   };
 
-  const events = viewMode === 'live' ? liveEvents : historyEvents;
+  // Apply zone name mapping to live events from context
+  const mappedLiveEvents = liveEvents.map(event => ({
+    ...event,
+    previous_zone: getZoneName(event.previous_zone),
+    current_zone: getZoneName(event.current_zone),
+  }));
+
+  const events = viewMode === 'live' ? mappedLiveEvents : historyEvents;
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 shadow-sm">

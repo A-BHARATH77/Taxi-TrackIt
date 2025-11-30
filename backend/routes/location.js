@@ -18,10 +18,12 @@ router.post("/update", async (req, res) => {
     // 1. Load all zones from DB
     const zonesResult = await pool.query("SELECT id, boundary FROM zones");
     let currentZone = null;
+    let currentZoneName = null;
 
     for (const zone of zonesResult.rows) {
       if (turf.booleanPointInPolygon(point, zone.boundary)) {
         currentZone = zone.id;
+        currentZoneName = zone.name;
         break;
       }
     }
@@ -60,6 +62,7 @@ router.post("/update", async (req, res) => {
         lng,
         speed,
         zone: currentZone,
+        zoneName: currentZoneName,
         timestamp: Date.now(),
       })
     );

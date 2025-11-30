@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { locationService } from '../services/locationService';
 import { toast } from 'sonner';
+import { useZoneEvents } from '../contexts/ZoneEventsContext';
 
 interface TaxiLocation {
   taxi_id: string;
@@ -16,6 +17,7 @@ export const useWebSocket = () => {
   const [taxis, setTaxis] = useState<Map<string, TaxiLocation>>(new Map());
   const [isConnected, setIsConnected] = useState(false);
   const [ws, setWs] = useState<WebSocket | null>(null);
+  const { addEvent } = useZoneEvents();
 
   useEffect(() => {
     // Load initial locations
@@ -67,7 +69,18 @@ export const useWebSocket = () => {
       },
       (zoneCrossingData) => {
         // Handle zone crossing events and show toast
-        const { event_type, taxi_name, previous_zone, current_zone } = zoneCrossingData;
+        const { event_type, taxi_name, taxi_id, previous_zone, current_zone, timestamp } = zoneCrossingData;
+        
+        // Add to zone events context for the panel
+        addEvent({
+          id: `${taxi_id}-${Date.now()}`,
+          taxi_id: String(taxi_id),
+          taxi_name: taxi_name || `Taxi ${taxi_id}`,
+          event_type,
+          previous_zone,
+          current_zone,
+          timestamp: timestamp || Date.now(),
+        });
         
         if (event_type === 'ENTER') {
           toast.success(`${taxi_name} entered ${current_zone}`, {
