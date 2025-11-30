@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { Sidebar, SidebarBody, SidebarLink } from "../components/ui/sidebar";
-import { HoverBorderGradientDemo } from "../components/HoverBorderGradientDemo";
 import { MapComponent } from "../components/MapComponent";
 import { AddZoneDialog } from "../components/AddZoneDialog";
 import { DeleteZoneDialog } from "../components/DeleteZoneDialog";
@@ -14,7 +13,6 @@ import {
   IconBrandTabler,
   IconCar,
   IconMapPin,
-  IconEdit,
   IconTrash,
 } from "@tabler/icons-react";
 import {
