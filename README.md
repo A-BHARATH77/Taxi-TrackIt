@@ -15,7 +15,7 @@ A full-stack real-time taxi tracking application with geofencing capabilities, z
 - [Technology Stack](#-technology-stack)
 - [Prerequisites](#-prerequisites)
 - [Installation](#-installation)
-
+- [Future Improvemnets](#-future-improvements)
 ---
 
 ## ✨ Features
