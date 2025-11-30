@@ -1,7 +1,7 @@
 import express from 'express';
 import redisService from '../services/redisService.js';
 import zoneService from '../services/zoneService.js';
-import supabase from '../config/supabaseClient.js';
+import { supabase } from '../config/supabaseClient.js';
 
 const router = express.Router();
 

@@ -18,7 +18,7 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 interface Zone {
-  id: number;
+  id: string | number;
   name: string;
   boundary: any;
 }
@@ -237,7 +237,7 @@ export function LiveTrackingMap() {
           .bindPopup(`
             <strong>${taxi.taxi_name || `Taxi ${taxi.taxi_id}`}</strong><br>
             Speed: ${taxi.speed || 0} km/h<br>
-            Zone: ${taxi.zone_name || (taxi.zone ? `Zone ${taxi.zone}` : 'Outside')}<br>
+            Zone: ${taxi.zone_name || (taxi.zone ? zones.find(z => String(z.id) === String(taxi.zone))?.name || `Zone ${String(taxi.zone).substring(0, 8)}...` : 'Outside')}<br>
             Last update: ${new Date(taxi.timestamp).toLocaleTimeString()}
           `);
 
