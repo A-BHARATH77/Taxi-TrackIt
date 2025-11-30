@@ -1,0 +1,43 @@
+services:
+  # Backend API Server
+  - type: web
+    name: taxi-trackit-backend
+    runtime: node
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: taxi-trackit-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: taxi-trackit-redis
+          property: port
+      - key: REDIS_PASSWORD
+        fromService:
+          type: redis
+          name: taxi-trackit-redis
+          property: password
+
+  # Redis Instance
+  - type: redis
+    name: taxi-trackit-redis
+    region: oregon
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
