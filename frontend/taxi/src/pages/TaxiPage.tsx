@@ -111,7 +111,7 @@ export function TaxiPage() {
 
   const handleEditTaxi = async (id: number, data: { name: string; taxiId: string }) => {
     try {
-      const result = await taxiService.updateTaxi(id, data);
+      await taxiService.updateTaxi(id, data);
       setAlert({ type: 'success', message: `Taxi "${data.name}" updated successfully!` });
       setTimeout(() => setAlert(null), 3000);
       fetchTaxis(); // Refresh the taxi list

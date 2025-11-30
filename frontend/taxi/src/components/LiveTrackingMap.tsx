@@ -23,16 +23,6 @@ interface Zone {
   boundary: any;
 }
 
-interface TaxiLocation {
-  taxi_id: string;
-  lat: number;
-  lng: number;
-  speed: number;
-  zone: number | null;
-  timestamp: number;
-  zone_changed?: boolean;
-}
-
 export function LiveTrackingMap() {
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
