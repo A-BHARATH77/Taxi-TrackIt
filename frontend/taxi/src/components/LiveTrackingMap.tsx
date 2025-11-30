@@ -235,9 +235,9 @@ export function LiveTrackingMap() {
         const marker = L.marker([taxi.lat, taxi.lng], { icon })
           .addTo(mapRef.current!)
           .bindPopup(`
-            <strong>Taxi ${taxi.taxi_id}</strong><br>
+            <strong>${taxi.taxi_name || `Taxi ${taxi.taxi_id}`}</strong><br>
             Speed: ${taxi.speed || 0} km/h<br>
-            Zone: ${taxi.zone || 'Outside'}<br>
+            Zone: ${taxi.zone_name || (taxi.zone ? `Zone ${taxi.zone}` : 'Outside')}<br>
             Last update: ${new Date(taxi.timestamp).toLocaleTimeString()}
           `);
 

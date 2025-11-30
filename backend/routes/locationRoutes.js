@@ -1,6 +1,7 @@
 import express from 'express';
 import redisService from '../services/redisService.js';
 import zoneService from '../services/zoneService.js';
+import supabase from '../config/supabaseClient.js';
 
 const router = express.Router();
 
@@ -25,6 +26,38 @@ router.post('/location/update', async (req, res) => {
 
     // 1. Detect current zone using Turf.js
     const currentZone = await zoneService.detectZone(lat, lng);
+    
+    // Get zone name if in a zone
+    let currentZoneName = null;
+    if (currentZone) {
+      try {
+        const { data: zoneData } = await supabase
+          .from('zones')
+          .select('name')
+          .eq('id', currentZone)
+          .single();
+        if (zoneData) {
+          currentZoneName = zoneData.name;
+        }
+      } catch (e) {
+        // Zone name lookup failed, use ID
+      }
+    }
+
+    // Get taxi name
+    let taxiName = null;
+    try {
+      const { data: taxiData } = await supabase
+        .from('taxis')
+        .select('name')
+        .eq('taxi_id', taxi_id)
+        .single();
+      if (taxiData) {
+        taxiName = taxiData.name;
+      }
+    } catch (e) {
+      // Taxi name lookup failed
+    }
 
     // 2. Get last known zone from Redis
     const lastZone = await redisService.getTaxiZone(taxi_id);
@@ -47,21 +80,24 @@ router.post('/location/update', async (req, res) => {
       await redisService.setTaxiZone(taxi_id, currentZone);
     }
 
-    // 4. Store latest location in Redis
+    // 4. Store latest location in Redis (with zone name for zone_crossings to use)
     await redisService.setTaxiLocation(taxi_id, {
       lat,
       lng,
       speed: speed || 0,
-      zone: currentZone
+      zone: currentZone,
+      zoneName: currentZoneName
     });
 
     // 5. Publish update to WebSocket clients via Redis Pub/Sub
     await redisService.publishTaxiUpdate({
       taxi_id,
+      taxi_name: taxiName,
       lat,
       lng,
       speed: speed || 0,
       zone: currentZone,
+      zone_name: currentZoneName,
       zone_changed: zoneChanged,
       timestamp: Date.now()
     });

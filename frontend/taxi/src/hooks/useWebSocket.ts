@@ -5,10 +5,12 @@ import { useZoneEvents } from '../contexts/ZoneEventsContext';
 
 interface TaxiLocation {
   taxi_id: string;
+  taxi_name?: string;
   lat: number;
   lng: number;
   speed: number;
   zone: number | null;
+  zone_name?: string;
   timestamp: number;
   zone_changed?: boolean;
 }
