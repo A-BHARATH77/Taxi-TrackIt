@@ -19,6 +19,40 @@ export function ZoneEventsPanel() {
   const [liveEvents, setLiveEvents] = useState<ZoneEvent[]>([]);
   const [historyEvents, setHistoryEvents] = useState<ZoneEvent[]>([]);
   const [loading, setLoading] = useState(false);
+  const [zoneMap, setZoneMap] = useState<Map<string, string>>(new Map());
+
+  // Fetch zones for ID to name mapping
+  useEffect(() => {
+    const fetchZones = async () => {
+      try {
+        const API_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
+        const response = await fetch(`${API_URL}/api/zones`);
+        if (response.ok) {
+          const zones = await response.json();
+          const map = new Map<string, string>();
+          zones.forEach((zone: any) => {
+            map.set(zone.id.toString(), zone.name);
+          });
+          setZoneMap(map);
+          console.log('📍 Loaded zone mapping:', Object.fromEntries(map));
+        }
+      } catch (error) {
+        console.error('Error fetching zones:', error);
+      }
+    };
+    fetchZones();
+  }, []);
+
+  // Helper function to get zone name from ID or return as-is if already a name
+  const getZoneName = (zone: string): string => {
+    if (!zone || zone === 'Outside' || zone === 'null') return 'Outside';
+    // Check if it's a UUID (zone ID)
+    if (zone.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      return zoneMap.get(zone) || `Zone ${zone.substring(0, 8)}...`;
+    }
+    // Otherwise it's already a zone name
+    return zone;
+  };
 
   // Fetch history from API
   const fetchHistory = async () => {
@@ -98,11 +132,12 @@ export function ZoneEventsPanel() {
             taxi_id: taxiId,
             taxi_name: `${taxiName} - ${taxiId}`,
             event_type: eventData.event_type,
-            previous_zone: eventData.previous_zone,
-            current_zone: eventData.current_zone,
+            previous_zone: getZoneName(eventData.previous_zone),
+            current_zone: getZoneName(eventData.current_zone),
             timestamp: eventData.timestamp || Date.now(),
           };
 
+          console.log('🚪 Live zone event:', newEvent);
           setLiveEvents((prev) => [newEvent, ...prev].slice(0, 50)); // Keep last 50 events
         }
       } catch (error) {
@@ -123,7 +158,7 @@ export function ZoneEventsPanel() {
         ws.close();
       }
     };
-  }, [viewMode]);
+  }, [viewMode, zoneMap]); // Add zoneMap as dependency
 
   const getEventColor = (eventType: string) => {
     switch (eventType) {
