@@ -21,7 +21,7 @@ export const taxiService = {
   // Fetch all taxis
   async fetchTaxis(): Promise<Taxi[]> {
     try {
-      const response = await fetch(`${API_URL}/taxis`);
+      const response = await fetch(`${API_URL}/api/taxis`);
       if (response.ok) {
         return await response.json();
       } else {
@@ -35,7 +35,7 @@ export const taxiService = {
   // Add a new taxi
   async addTaxi(data: AddTaxiData): Promise<any> {
     try {
-      const response = await fetch(`${API_URL}/taxi`, {
+      const response = await fetch(`${API_URL}/api/taxi`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ export const taxiService = {
   // Update a taxi
   async updateTaxi(id: number, data: UpdateTaxiData): Promise<any> {
     try {
-      const response = await fetch(`${API_URL}/taxi/${id}`, {
+      const response = await fetch(`${API_URL}/api/taxi/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ export const taxiService = {
   // Delete a taxi
   async deleteTaxi(id: number): Promise<any> {
     try {
-      const response = await fetch(`${API_URL}/taxi/${id}`, {
+      const response = await fetch(`${API_URL}/api/taxi/${id}`, {
         method: 'DELETE',
       });
 

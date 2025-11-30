@@ -16,17 +16,26 @@ const server = http.createServer(app);
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use("/api", taxiRoutes);
-app.use("/api", zonesRoutes);
-app.use("/api", locationRoutes);
-app.use("/api/zone-crossing", zoneCrossingsRoutes);
-
 // Add middleware to log requests
 app.use((req, res, next) => {
   console.log(`📨 ${req.method} ${req.path} - ${new Date().toLocaleTimeString()}`);
   next();
 });
+
+// Root endpoint
+app.get("/", (req, res) => {
+  res.json({ 
+    message: "Taxi Trackit Backend API",
+    status: "running",
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Routes
+app.use("/api", taxiRoutes);
+app.use("/api", zonesRoutes);
+app.use("/api", locationRoutes);
+app.use("/api/zone-crossing", zoneCrossingsRoutes);
 
 // Setup WebSocket
 setupWebSocket(server);

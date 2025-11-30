@@ -14,7 +14,7 @@ export const locationService = {
   // Get all current taxi locations
   async getAllLocations(): Promise<TaxiLocation[]> {
     try {
-      const response = await fetch(`${API_URL}/location/latest`);
+      const response = await fetch(`${API_URL}/api/location/latest`);
       if (!response.ok) {
         throw new Error('Failed to fetch locations');
       }
@@ -28,7 +28,7 @@ export const locationService = {
   // Get specific taxi location
   async getTaxiLocation(taxiId: string): Promise<TaxiLocation> {
     try {
-      const response = await fetch(`${API_URL}/location/${taxiId}`);
+      const response = await fetch(`${API_URL}/api/location/${taxiId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch taxi location');
       }
@@ -47,7 +47,7 @@ export const locationService = {
     speed?: number;
   }): Promise<any> {
     try {
-      const response = await fetch(`${API_URL}/location/update`, {
+      const response = await fetch(`${API_URL}/api/location/update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

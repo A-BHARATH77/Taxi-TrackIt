@@ -16,7 +16,7 @@ export const zoneService = {
   // Fetch all zones
   async fetchZones(): Promise<Zone[]> {
     try {
-      const response = await fetch(`${API_URL}/zones`);
+      const response = await fetch(`${API_URL}/api/zones`);
       if (response.ok) {
         return await response.json();
       } else {
@@ -30,7 +30,7 @@ export const zoneService = {
   // Add a new zone
   async addZone(data: AddZoneData): Promise<any> {
     try {
-      const response = await fetch(`${API_URL}/zone`, {
+      const response = await fetch(`${API_URL}/api/zone`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ export const zoneService = {
   // Delete a zone
   async deleteZone(id: number): Promise<any> {
     try {
-      const response = await fetch(`${API_URL}/zone/${id}`, {
+      const response = await fetch(`${API_URL}/api/zone/${id}`, {
         method: 'DELETE',
       });
 

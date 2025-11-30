@@ -25,7 +25,7 @@ export function ZoneEventsPanel() {
     setLoading(true);
     try {
       const API_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
-      const response = await fetch(`${API_URL}/zone-crossing/all?limit=100`);
+      const response = await fetch(`${API_URL}/api/zone-crossing/all?limit=100`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch zone crossing history');
